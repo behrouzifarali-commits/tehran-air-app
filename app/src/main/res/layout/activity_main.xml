@@ -1,0 +1,331 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#0F172A"
+    android:layoutDirection="rtl">
+
+    <!-- TAB 1: AIR QUALITY MONITOR -->
+    <ScrollView
+        android:id="@+id/tabMonitorContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottomNav"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="18dp">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="پایش هوشمند کیفیت هوای تهران"
+                android:textColor="#F8FAFC"
+                android:textSize="19sp"
+                android:textStyle="bold"
+                android:layout_marginTop="8dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="طراحی شده توسط شرکت توکا انرژی پارس"
+                android:textColor="#38BDF8"
+                android:textSize="12sp"
+                android:layout_marginBottom="12dp" />
+
+            <TextView
+                android:id="@+id/tvAlarmBanner"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="⚠️ هشدار! شاخص آلودگی از حد مجاز عبور کرد!"
+                android:background="#DC2626"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:gravity="center"
+                android:padding="11dp"
+                android:visibility="gone"
+                android:layout_marginBottom="12dp" />
+
+            <LinearLayout
+                android:layout_width="160dp"
+                android:layout_height="160dp"
+                android:orientation="vertical"
+                android:gravity="center"
+                android:background="@drawable/circle_bg"
+                android:layout_marginVertical="10dp">
+
+                <TextView
+                    android:id="@+id/tvAqiValue"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="--"
+                    android:textSize="50sp"
+                    android:textStyle="bold"
+                    android:textColor="#F8FAFC" />
+
+                <TextView
+                    android:id="@+id/tvAqiStatus"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="در حال دریافت..."
+                    android:textSize="12sp"
+                    android:textColor="#CBD5E1"
+                    android:gravity="center"
+                    android:paddingHorizontal="8dp" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/tvServerUpdate"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="بروزرسانی سرور: نامشخص"
+                android:textColor="#94A3B8"
+                android:textSize="12sp"
+                android:layout_marginTop="4dp" />
+
+            <TextView
+                android:id="@+id/tvLocationInfo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text=""
+                android:textColor="#10B981"
+                android:textSize="12sp"
+                android:visibility="gone"
+                android:layout_marginTop="2dp" />
+
+            <TextView
+                android:id="@+id/tvServiceState"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="وضعیت پایش پس‌زمینه: غیرفعال"
+                android:textColor="#64748B"
+                android:textSize="12sp"
+                android:layout_marginBottom="14dp" />
+
+            <!-- Station Selector + GPS Nearest Button -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/card_bg"
+                android:padding="13dp"
+                android:layout_marginBottom="10dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal"
+                    android:gravity="center_vertical"
+                    android:layout_marginBottom="8dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="ایستگاه / منطقه پایش:"
+                        android:textColor="#CBD5E1"
+                        android:textSize="13sp" />
+
+                    <Button
+                        android:id="@+id/btnNearestStation"
+                        android:layout_width="wrap_content"
+                        android:layout_height="36dp"
+                        android:text="📍 نزدیک‌ترین به من"
+                        android:textSize="11sp"
+                        android:backgroundTint="#0284C7"
+                        android:textColor="#FFFFFF"
+                        android:paddingHorizontal="10dp" />
+                </LinearLayout>
+
+                <Spinner
+                    android:id="@+id/spinnerStations"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:background="#334155"
+                    android:paddingHorizontal="8dp" />
+            </LinearLayout>
+
+            <!-- Threshold Input -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/card_bg"
+                android:padding="13dp"
+                android:layout_marginBottom="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="حد مجاز آلارم (عدد شاخص AQI):"
+                    android:textColor="#CBD5E1"
+                    android:textSize="13sp"
+                    android:layout_marginBottom="6dp" />
+
+                <EditText
+                    android:id="@+id/etThreshold"
+                    android:layout_width="match_parent"
+                    android:layout_height="46dp"
+                    android:background="#334155"
+                    android:textColor="#FFFFFF"
+                    android:textColorHint="#94A3B8"
+                    android:hint="مثلاً 150"
+                    android:inputType="number"
+                    android:gravity="center"
+                    android:textSize="16sp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnStartService"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="فعال‌سازی پایش خودکار (هر ۱۰ دقیقه)"
+                android:backgroundTint="#10B981"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/btnStopService"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="قطع صدای آژیر و توقف پایش"
+                android:backgroundTint="#EF4444"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold"
+                android:layout_marginBottom="8dp" />
+
+            <Button
+                android:id="@+id/btnRefreshNow"
+                android:layout_width="match_parent"
+                android:layout_height="44dp"
+                android:text="🔄 بروزرسانی دستی همین الان"
+                android:backgroundTint="#334155"
+                android:textColor="#E2E8F0" />
+        </LinearLayout>
+    </ScrollView>
+
+    <!-- TAB 2: ABOUT TOKA ENERGY PARS -->
+    <ScrollView
+        android:id="@+id/tabAboutContainer"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@+id/bottomNav"
+        android:visibility="gone"
+        android:fillViewport="true">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center_horizontal"
+            android:padding="22dp">
+
+            <ImageView
+                android:layout_width="110dp"
+                android:layout_height="110dp"
+                android:src="@drawable/tepco_logo_badge"
+                android:contentDescription="لوگوی توکا انرژی پارس"
+                android:layout_marginTop="12dp"
+                android:layout_marginBottom="14dp" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="شرکت مهندسی توکا انرژی پارس"
+                android:textColor="#F8FAFC"
+                android:textSize="21sp"
+                android:textStyle="bold"
+                android:gravity="center" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="TOKA ENERGY PARS Co. (TEPCO)"
+                android:textColor="#38BDF8"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:layout_marginTop="4dp"
+                android:layout_marginBottom="18dp" />
+
+            <!-- CSR / Health Mission Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/card_bg"
+                android:padding="16dp"
+                android:layout_marginBottom="14dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="🌿 مسئولیت اجتماعی و حفاظت از سلامت"
+                    android:textColor="#10B981"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="این نرم‌افزار به صورت کاملاً رایگان توسط شرکت توکا انرژی پارس با هدف پایش لحظه‌ای کیفیت هوا و مدیریت پیشگیرانه مواجهه با آلودگی هوا، به ویژه برای کودکان، سالمندان، بیماران قلبی و تنفسی و سایر گروه‌های حساس و با ریسک بالا طراحی و عرضه شده است."
+                    android:textColor="#E2E8F0"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="5dp" />
+            </LinearLayout>
+
+            <!-- Company Introduction Card -->
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:background="@drawable/card_bg"
+                android:padding="16dp"
+                android:layout_marginBottom="18dp">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="⚡ معرفی شرکت توکا انرژی پارس"
+                    android:textColor="#38BDF8"
+                    android:textSize="15sp"
+                    android:textStyle="bold"
+                    android:layout_marginBottom="8dp" />
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="شرکت توکا انرژی پارس، مستقر در پارک علم و فناوری دانشگاه صنعتی شریف، پیشرو در طراحی و مهندسی فرآیند، بهینه‌سازی مصرف انرژی، سیستم‌های تبرید صنعتی، بازیافت و مایع‌سازی گازها و توسعه راهکارهای هوشمند پایش محیط‌زیست و صنایع انرژی است."
+                    android:textColor="#CBD5E1"
+                    android:textSize="14sp"
+                    android:lineSpacingExtra="5dp" />
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnVisitWebsite"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:text="🌐 مشاهده وب‌سایت رسمی: www.tepcoenergy.com"
+                android:backgroundTint="#0284C7"
+                android:textColor="#FFFFFF"
+                android:textStyle="bold" />
+        </LinearLayout>
+    </ScrollView>
+
+    <com.google.android.material.bottomnavigation.BottomNavigationView
+        android:id="@+id/bottomNav"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:background="#1E293B"
+        app:itemIconTint="#38BDF8"
+        app:itemTextColor="#F8FAFC"
+        app:menu="@menu/bottom_nav_menu" />
+
+</RelativeLayout>

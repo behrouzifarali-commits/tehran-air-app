@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<vector xmlns:android="http://schemas.android.com/apk/res/android"
+    android:width="110dp"
+    android:height="110dp"
+    android:viewportWidth="120"
+    android:viewportHeight="120">
+    <!-- Outer Energy & Clean Air Shield Ring -->
+    <path
+        android:fillColor="#1E293B"
+        android:strokeColor="#10B981"
+        android:strokeWidth="4"
+        android:pathData="M60,6 A54,54 0 1,1 59.9,6 Z" />
+    <!-- Inner Turbine / Energy Arc -->
+    <path
+        android:strokeColor="#38BDF8"
+        android:strokeWidth="4"
+        android:strokeLineCap="round"
+        android:pathData="M32,60 A28,28 0 0,1 88,60" />
+    <!-- Clean Air Leaf / Wave -->
+    <path
+        android:fillColor="#10B981"
+        android:pathData="M60,36 C74,36 82,48 82,60 C72,60 64,54 60,46 C56,54 48,60 38,60 C38,48 46,36 60,36 Z" />
+    <!-- TEPCO Monogram Base -->
+    <path
+        android:fillColor="#F8FAFC"
+        android:pathData="M38,72 L82,72 L82,77 L63,77 L63,94 L57,94 L57,77 L38,77 Z" />
+</vector>
