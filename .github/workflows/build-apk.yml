@@ -15,17 +15,42 @@ jobs:
         with:
           java-version: '17'
           distribution: 'temurin'
-      - name: Generate Release Keystore for Toka Energy Pars
-        run: |
-          keytool -genkeypair -v -keystore app/tepco-release.jks -keyalg RSA -keysize 2048 -validity 10000 -alias tepco_key -storepass "TepcoEnergy2026!" -keypass "TepcoEnergy2026!" -dname "CN=Toka Energy Pars, OU=Engineering, O=TEPCO, L=Tehran, S=Tehran, C=IR"
       - name: Setup Gradle
         uses: gradle/actions/setup-gradle@v3
         with:
           gradle-version: '8.2'
-      - name: Build Signed Release APK
-        run: gradle assembleRelease
+      - name: Build and verify signed release APK
+        env:
+          RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
+          RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
+          RELEASE_KEY_ALIAS: ${{ secrets.RELEASE_KEY_ALIAS }}
+          RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
+        run: |
+          set -euo pipefail
+          : "${RELEASE_KEYSTORE_BASE64:?Set the RELEASE_KEYSTORE_BASE64 repository secret}"
+          : "${RELEASE_STORE_PASSWORD:?Set the RELEASE_STORE_PASSWORD repository secret}"
+          : "${RELEASE_KEY_ALIAS:?Set the RELEASE_KEY_ALIAS repository secret}"
+          : "${RELEASE_KEY_PASSWORD:?Set the RELEASE_KEY_PASSWORD repository secret}"
+
+          umask 077
+          keystore="$(mktemp "$RUNNER_TEMP/tepco-release.XXXXXXXX.jks")"
+          trap 'rm -f "$keystore"' EXIT
+          printf '%s' "$RELEASE_KEYSTORE_BASE64" | base64 --decode > "$keystore"
+          unset RELEASE_KEYSTORE_BASE64
+
+          gradle --no-daemon :app:assembleRelease \
+            "-Pandroid.injected.signing.store.file=$keystore" \
+            "-Pandroid.injected.signing.store.password=$RELEASE_STORE_PASSWORD" \
+            "-Pandroid.injected.signing.key.alias=$RELEASE_KEY_ALIAS" \
+            "-Pandroid.injected.signing.key.password=$RELEASE_KEY_PASSWORD"
+
+          sdk_dir="${ANDROID_HOME:-${ANDROID_SDK_ROOT:-}}"
+          apksigner="$(find "${sdk_dir:?Android SDK path is missing}/build-tools" -name apksigner -type f | sort -V | tail -n 1)"
+          test -x "$apksigner"
+          "$apksigner" verify app/build/outputs/apk/release/app-release.apk
       - name: Upload Signed Release APK
         uses: actions/upload-artifact@v4
         with:
           name: Tehran-Air-TEPCO-Release-APK-v3
           path: app/build/outputs/apk/release/app-release.apk
+          if-no-files-found: error
