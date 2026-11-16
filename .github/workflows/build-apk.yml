@@ -1,4 +1,4 @@
-name: Build TEPCO Air Signed Release APK
+name: Build TEPCO Air APK
 
 on:
   push:
@@ -24,7 +24,8 @@ jobs:
         run: |
           test -f app/src/main/AndroidManifest.xml
           test -f app/src/main/res/layout/activity_main.xml
-      - name: Build and verify signed release APK
+      - name: Build and verify APK
+        id: apk
         env:
           RELEASE_KEYSTORE_BASE64: ${{ secrets.RELEASE_KEYSTORE_BASE64 }}
           RELEASE_STORE_PASSWORD: ${{ secrets.RELEASE_STORE_PASSWORD }}
@@ -32,10 +33,20 @@ jobs:
           RELEASE_KEY_PASSWORD: ${{ secrets.RELEASE_KEY_PASSWORD }}
         run: |
           set -euo pipefail
-          : "${RELEASE_KEYSTORE_BASE64:?Set the RELEASE_KEYSTORE_BASE64 repository secret}"
-          : "${RELEASE_STORE_PASSWORD:?Set the RELEASE_STORE_PASSWORD repository secret}"
-          : "${RELEASE_KEY_ALIAS:?Set the RELEASE_KEY_ALIAS repository secret}"
-          : "${RELEASE_KEY_PASSWORD:?Set the RELEASE_KEY_PASSWORD repository secret}"
+          missing=()
+          for name in RELEASE_KEYSTORE_BASE64 RELEASE_STORE_PASSWORD RELEASE_KEY_ALIAS RELEASE_KEY_PASSWORD; do
+            if [[ -z "${!name:-}" ]]; then
+              missing+=("$name")
+            fi
+          done
+
+          if (( ${#missing[@]} > 0 )); then
+            echo "::notice::Building a test APK. Missing release signing secrets: ${missing[*]}"
+            gradle --no-daemon :app:assembleDebug
+            echo "path=app/build/outputs/apk/debug/app-debug.apk" >> "$GITHUB_OUTPUT"
+            echo "artifact=Tehran-Air-TEPCO-Test-APK" >> "$GITHUB_OUTPUT"
+            exit 0
+          fi
 
           umask 077
           keystore="$(mktemp "$RUNNER_TEMP/tepco-release.XXXXXXXX.jks")"
@@ -53,9 +64,11 @@ jobs:
           apksigner="$(find "${sdk_dir:?Android SDK path is missing}/build-tools" -name apksigner -type f | sort -V | tail -n 1)"
           test -x "$apksigner"
           "$apksigner" verify app/build/outputs/apk/release/app-release.apk
-      - name: Upload Signed Release APK
+          echo "path=app/build/outputs/apk/release/app-release.apk" >> "$GITHUB_OUTPUT"
+          echo "artifact=Tehran-Air-TEPCO-Release-APK-v3" >> "$GITHUB_OUTPUT"
+      - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: Tehran-Air-TEPCO-Release-APK-v3
-          path: app/build/outputs/apk/release/app-release.apk
+          name: ${{ steps.apk.outputs.artifact }}
+          path: ${{ steps.apk.outputs.path }}
           if-no-files-found: error
